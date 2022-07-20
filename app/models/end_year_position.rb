@@ -1,0 +1,2 @@
+class EndYearPosition < ApplicationRecord
+end
