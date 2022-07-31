@@ -64,7 +64,7 @@ ActiveRecord::Schema[7.0].define(version: 0) do
     t.decimal "asset_price"
     t.decimal "total_amount"
     t.decimal "fees"
-    t.decimal "purchase", null: false
+    t.integer "purchase", null: false
     t.decimal "net_profit"
     t.integer "asset_id", null: false
     t.integer "trade_type_id", null: false
