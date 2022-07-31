@@ -4,7 +4,8 @@ class IrpfController < ApplicationController
       profit_from_sales_below_20k:,
       swing_trade:,
       day_trade:,
-      fiis:
+      fiis:,
+      end_year_positions:
     }
   end
 
@@ -130,6 +131,16 @@ class IrpfController < ApplicationController
                 filter_params[:year] + '-01-01',
                 filter_params[:year] + '-12-31')
          .group('month').map { |i| i.attributes.except('id') }
+  end
+
+  def end_year_positions
+    EndYearPosition.select('asset.code,
+                            end_year_position.position,
+                            ROUND(end_year_position.average_price, 2) AS average_price,
+                            ROUND(end_year_position.average_price * end_year_position.position, 2) AS total_cost')
+                   .joins(:asset)
+                   .where(year: filter_params[:year])
+                   .order('asset.code').map { |i| i.attributes.except('id') }
   end
 
   def filter_params
