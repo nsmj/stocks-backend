@@ -31,7 +31,7 @@ class IrpfController < ApplicationController
         GROUP BY month
         HAVING sales_amount < 20000
       )
-      ", { year: filter_params['year'].to_i }]
+      ", { year: filter_params[:year].to_i }]
 
     result[0].value
   end
@@ -71,7 +71,7 @@ class IrpfController < ApplicationController
           GROUP BY month
       )
       WHERE CAST(value AS decimal) <> 0
-      ", { year: filter_params['year'].to_i }]).map { |i| i.attributes.except('id') }
+      ", { year: filter_params[:year].to_i }]).map { |i| i.attributes.except('id') }
   end
 
   def swing_trade
@@ -118,23 +118,18 @@ class IrpfController < ApplicationController
             GROUP BY month
         )
         WHERE CAST(Value AS decimal) <> 0
-    ", { year: filter_params['year'].to_i }]).map { |i| i.attributes.except('id') }
+    ", { year: filter_params[:year].to_i }]).map { |i| i.attributes.except('id') }
   end
 
   def fiis
-    Trade.find_by_sql(["
-      SELECT
-        STRFTIME('%m', date) month,
-        SUM(net_profit) AS value
-      FROM
-        trade t
-      LEFT JOIN asset a ON t.asset_id = a.id
-      WHERE
-        date BETWEEN ':year-01-01' AND ':year-12-31'
-      AND t.trade_type_id = 3
-        AND purchase = 0
-        GROUP BY month
-      ", { year: filter_params['year'].to_i }]).map { |i| i.attributes.except('id') }
+    Trade.select('STRFTIME("%m", date) month,
+                 SUM(net_profit) AS value')
+         .where('date BETWEEN ? AND ?
+                 AND trade_type_id = 3
+                 AND purchase = 0',
+                filter_params[:year] + '-01-01',
+                filter_params[:year] + '-12-31')
+         .group('month').map { |i| i.attributes.except('id') }
   end
 
   def filter_params
