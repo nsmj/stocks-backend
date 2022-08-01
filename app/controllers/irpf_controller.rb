@@ -134,13 +134,33 @@ class IrpfController < ApplicationController
   end
 
   def end_year_positions
-    EndYearPosition.select('asset.code,
-                            end_year_position.position,
-                            ROUND(end_year_position.average_price, 2) AS average_price,
-                            ROUND(end_year_position.average_price * end_year_position.position, 2) AS total_cost')
-                   .joins(:asset)
-                   .where(year: filter_params[:year])
-                   .order('asset.code').map { |i| i.attributes.except('id') }
+    end_year_positions = EndYearPosition.select('
+                                        asset.code,
+                                        asset.name AS asset_name,
+                                        end_year_position.position,
+                                        ROUND(end_year_position.average_price, 2) AS average_price,
+                                        ROUND(end_year_position.total_cost, 2) AS total_cost,
+                                        asset_type.name AS asset_type')
+                                        .joins(asset: :asset_type)
+                                        .where(year: filter_params[:year])
+                                        .order('asset.code')
+
+    end_year_positions.map do |i|
+      p = i.attributes.except('id')
+
+      p['text'] = case i.asset_type
+                  when 'Ação'
+                    "#{i.position} AÇÕES DA #{i.asset_name}. CÓDIGO DE NEGOCIAÇÃO B3: #{i.code}. CNPJ 02.474.103/0001-19. PREÇO MÉDIO DE R$ #{i.average_price.to_s.gsub('.', ',')} POR AÇÃO. CUSTO TOTAL DE R$ #{i.total_cost.to_s.gsub('.', ',')}"
+                  when 'FII'
+                    'FII'
+                    #"#{i.position} COTAS DO FII #{i.asset_name}. CÓDIGO DE NEGOCIAÇÃO B3: #{i.code}. CNPJ 02.474.103/0001-19. PREÇO MÉDIO DE R$ #{i.average_price.to_s.gsub('.', ',')} POR AÇÃO. CUSTO TOTAL DE R$ #{i.total_cost.to_s.gsub('.', ',')}"
+                  else
+                    'goiaba'
+                  end
+
+      p.except('asset_type')
+      p
+    end
   end
 
   def filter_params
