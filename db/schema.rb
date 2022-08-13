@@ -37,6 +37,7 @@ ActiveRecord::Schema[7.0].define(version: 0) do
     t.integer "year", null: false
     t.decimal "average_price", null: false
     t.integer "position", null: false
+    t.decimal "total_cost", null: false
     t.integer "asset_id", null: false
   end
 
