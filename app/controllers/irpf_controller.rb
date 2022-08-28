@@ -83,7 +83,7 @@ class IrpfController < ApplicationController
           stock_profit + etf_profit + loss
         ELSE
           etf_profit + loss
-        END Value
+        END value
         FROM
         (
           SELECT
@@ -118,7 +118,7 @@ class IrpfController < ApplicationController
             AND a.asset_type_id IN (1, 3)
             GROUP BY month
         )
-        WHERE CAST(Value AS decimal) <> 0
+        WHERE CAST(value AS decimal) <> 0
     ", { year: filter_params[:year].to_i }]).map { |i| i.attributes.except('id') }
   end
 
@@ -153,7 +153,7 @@ class IrpfController < ApplicationController
                     "#{i.position} AÇÕES DA #{i.asset_name}. CÓDIGO DE NEGOCIAÇÃO B3: #{i.code}. CNPJ 02.474.103/0001-19. PREÇO MÉDIO DE R$ #{i.average_price.to_s.gsub('.', ',')} POR AÇÃO. CUSTO TOTAL DE R$ #{i.total_cost.to_s.gsub('.', ',')}"
                   when 'FII'
                     'FII'
-                    #"#{i.position} COTAS DO FII #{i.asset_name}. CÓDIGO DE NEGOCIAÇÃO B3: #{i.code}. CNPJ 02.474.103/0001-19. PREÇO MÉDIO DE R$ #{i.average_price.to_s.gsub('.', ',')} POR AÇÃO. CUSTO TOTAL DE R$ #{i.total_cost.to_s.gsub('.', ',')}"
+                    # "#{i.position} COTAS DO FII #{i.asset_name}. CÓDIGO DE NEGOCIAÇÃO B3: #{i.code}. CNPJ 02.474.103/0001-19. PREÇO MÉDIO DE R$ #{i.average_price.to_s.gsub('.', ',')} POR AÇÃO. CUSTO TOTAL DE R$ #{i.total_cost.to_s.gsub('.', ',')}"
                   else
                     'goiaba'
                   end
