@@ -11,8 +11,8 @@ class IrpfController < ApplicationController
   end
 
   def irrf
-    Irrf.select("SUM(value) AS value, STRFTIME('%m', date) month, trade_type.name AS trade_type").joins(:trade_type).where(
-      "date >= ':year-01-01' AND date <= ':year-12-31'", { year: 2022 }
+    Irrf.select("ROUND(SUM(value), 2) AS value, STRFTIME('%m', date) month, trade_type.name AS trade_type").joins(:trade_type).where(
+      "date >= ':year-01-01' AND date <= ':year-12-31'", { year: filter_params[:year].to_i }
     ).group('month, trade_type.name').order(:month).map do |i|
       i.attributes.except('id')
     end
