@@ -145,6 +145,7 @@ class IrpfController < ApplicationController
   def end_year_positions
     end_year_positions = EndYearPosition.select('
                                         asset.code,
+                                        asset.cnpj,
                                         asset.name AS asset_name,
                                         end_year_position.position,
                                         ROUND(end_year_position.average_price, 2) AS average_price,
@@ -159,10 +160,11 @@ class IrpfController < ApplicationController
 
       p['text'] = case i.asset_type
                   when 'Ação'
-                    "#{i.position} AÇÕES DA #{i.asset_name}. CÓDIGO DE NEGOCIAÇÃO B3: #{i.code}. CNPJ 02.474.103/0001-19. PREÇO MÉDIO DE R$ #{i.average_price.to_s.gsub('.', ',')} POR AÇÃO. CUSTO TOTAL DE R$ #{i.total_cost.to_s.gsub('.', ',')}"
+                    "#{i.position} AÇÕES DA #{i.asset_name}. CÓDIGO DE NEGOCIAÇÃO B3: #{i.code}. CNPJ #{i.cnpj}. PREÇO MÉDIO DE R$ #{i.average_price.to_s.gsub('.', ',')} POR AÇÃO. CUSTO TOTAL DE R$ #{i.total_cost.to_s.gsub('.', ',')}"
                   when 'FII'
-                    'FII'
-                    # "#{i.position} COTAS DO FII #{i.asset_name}. CÓDIGO DE NEGOCIAÇÃO B3: #{i.code}. CNPJ 02.474.103/0001-19. PREÇO MÉDIO DE R$ #{i.average_price.to_s.gsub('.', ',')} POR AÇÃO. CUSTO TOTAL DE R$ #{i.total_cost.to_s.gsub('.', ',')}"
+                    "#{i.position} COTAS DO FII #{i.asset_name}. CÓDIGO DE NEGOCIAÇÃO B3: #{i.code}. CNPJ #{i.cnpj}. PREÇO MÉDIO DE R$ #{i.average_price.to_s.gsub('.', ',')} POR COTA. CUSTO TOTAL DE R$ #{i.total_cost.to_s.gsub('.', ',')}"
+                  when 'ETF'
+                    "#{i.position} COTAS DO ETF #{i.asset_name}. CÓDIGO DE NEGOCIAÇÃO B3: #{i.code}. CNPJ #{i.cnpj}. PREÇO MÉDIO DE R$ #{i.average_price.to_s.gsub('.', ',')} POR COTA. CUSTO TOTAL DE R$ #{i.total_cost.to_s.gsub('.', ',')}"
                   else
                     'goiaba'
                   end
